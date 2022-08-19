@@ -14,11 +14,7 @@ public class BenefitService {
         this.benefitRepo = benefitRepo;
     }
 
-    public Benefit addBenefit(Benefit benefit){
-        return benefitRepo.save(benefit);
-    }
-
-    public Benefit updateBenefit(Benefit benefit){
+    public Benefit saveBenefit(Benefit benefit){
         return benefitRepo.save(benefit);
     }
 

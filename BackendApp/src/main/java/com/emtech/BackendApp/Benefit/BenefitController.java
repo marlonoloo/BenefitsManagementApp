@@ -21,13 +21,13 @@ public class BenefitController {
 
     @PostMapping("add")
     public ResponseEntity<Benefit> addBenefitController(@RequestBody Benefit benefit){
-        Benefit newBenefit = benefitService.addBenefit(benefit);
+        Benefit newBenefit = benefitService.saveBenefit(benefit);
         return new ResponseEntity<>(newBenefit, HttpStatus.CREATED);
     }
 
     @PutMapping("edit")
     public ResponseEntity<Benefit> updateBenefitController(@RequestBody Benefit benefit){
-        Benefit newBenefit = benefitService.updateBenefit(benefit);
+        Benefit newBenefit = benefitService.saveBenefit(benefit);
         return new ResponseEntity<>(newBenefit, HttpStatus.OK);
     }
 
