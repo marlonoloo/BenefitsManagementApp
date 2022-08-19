@@ -3,6 +3,7 @@ package com.emtech.BackendApp.Authentication;
 import com.emtech.BackendApp.Dto.RegisterRequest;
 import com.emtech.BackendApp.Employee.Employee;
 import com.emtech.BackendApp.Employee.EmployeeRepo;
+import com.emtech.BackendApp.Exception.BenefitsException;
 import com.emtech.BackendApp.Mail.MailService;
 import com.emtech.BackendApp.Mail.NotificationEmail;
 import com.emtech.BackendApp.Verification.VerificationToken;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,4 +53,29 @@ public class AuthService {
         verificationTokenRepo.save(verificationToken);
         return token;
     }
+
+    public String verifyAccount(String token) {
+        Optional<VerificationToken> verificationToken = verificationTokenRepo.findByToken(token);
+        verificationToken.orElseThrow(()-> new BenefitsException("Invalid Token"));
+        return fetchUserAndEnable(verificationToken.get());
+    }
+
+    @Transactional
+    public String fetchUserAndEnable(VerificationToken verificationToken) {
+        String email = verificationToken.getEmployee().getEmail();
+        Employee employee = employeeRepo.findByEmail(email).orElseThrow(()->
+                new BenefitsException("User not found with email - " + email ));
+
+        verificationToken.setConfirmedAt(LocalDateTime.now());
+        verificationTokenRepo.save(verificationToken);
+        if(verificationToken.getConfirmedAt().isBefore(verificationToken.getExpiresAt())){
+            employee.setEnabled(true);
+            employeeRepo.save(employee);
+            return "Account activated successfully";
+        }
+        else {
+            return "Activation link expired";
+        }
+    }
+
 }
