@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
@@ -28,7 +27,7 @@ public class VerificationToken {
     @OneToOne(fetch = LAZY)
     private Employee employee;
     @NotNull
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime expiresAt = createdAt.plusMinutes(15);
+    private LocalDateTime createdAt;
+    private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
 }
